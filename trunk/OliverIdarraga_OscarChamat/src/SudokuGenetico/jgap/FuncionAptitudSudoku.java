@@ -28,14 +28,6 @@ public class FuncionAptitudSudoku extends FitnessFunction {
 
     @Override
     protected double evaluate(IChromosome ic) {
-        // The fitness value measures how many rows, columns, and boxes of
-        // the Sudoku square contain the values 1..squareSize. For each row,
-        // column, and box, the number of missing values is returned.  If
-        // all values, 1, 2, ..., m_squareSize occur, the 0 is returned.
-        // These values are summed for each row, column and box and the sum
-        // is subtracted from a high value. The higher the result the better 
-        // the fitness.
-
         int fitness = 0;
         Gene gene[] = ic.getGenes();
         for (int k = 0; k < nn; k++) {

@@ -100,7 +100,7 @@ public class JGAPSudoku {
                 val = sc.nextInt();
                 if (val != 0) {
 //                    sampleGenes[c.campo(i, j)]=new GenSudoku(conf, 1, nn,true,val);
-                    ((GenSudoku) sampleGenes[c.campo(i, j)]).setImmutableValue(val);
+                    ((GenSudoku) sampleGenes[c.campo(i, j)]).setValorInicial(val);
                 }
             }
         }
@@ -112,13 +112,7 @@ public class JGAPSudoku {
         //Cuantos cromosomas en la poblacion
         conf.setPopulationSize(POBLACION);
         Genotype population;
-//        try {
-//            Document doc = XMLManager.readFile(new File("testJGAP.xml"));
-//            population = XMLManager.getGenotypeFromDocument(conf, doc);
-//        } catch (FileNotFoundException fex) {
-//            population = Genotype.randomInitialGenotype(conf);
-//        }
-        //estos son los primeros 
+        
         population = Genotype.randomInitialGenotype(conf);
 
         System.out.print("Evolucionanado ");
@@ -129,22 +123,8 @@ public class JGAPSudoku {
             System.out.print(population.getFittestChromosome().getFitnessValue() + " ");
         }
         System.out.println();
-
-        /****
-        // Save progress to file. A new run of this example will then be able to
-        // resume where it stopped before!
         
-        // represent Genotype as tree with elements Chromomes and Genes
-        DataTreeBuilder builder = DataTreeBuilder.getInstance();
-        IDataCreators doc2 = builder.representGenotypeAsDocument(population);
         
-        // create XML document from generated tree
-        XMLDocumentBuilder docbuilder = new XMLDocumentBuilder();
-        Document xmlDoc = (Document) docbuilder.buildDocument(doc2);
-        XMLManager.writeFile(xmlDoc, new File("testJGAP.xml"));
-         ****/
-        // Display the best solution we found.
-        // -----------------------------------
         IChromosome bestSolutionSoFar = population.getFittestChromosome();
         System.out.println("The best solution has a fitness value of "
                 + bestSolutionSoFar.getFitnessValue());

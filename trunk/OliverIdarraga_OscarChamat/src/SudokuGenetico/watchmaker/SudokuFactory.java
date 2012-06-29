@@ -15,12 +15,13 @@
 // ============================================================================
 package SudokuGenetico.watchmaker;
 
-import ejemploDescargadoWatchmakerSudoku.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
+import java.util.Scanner;
+import org.jgap.RandomGenerator;
 import org.uncommons.watchmaker.framework.factories.AbstractCandidateFactory;
 
 /**
@@ -30,80 +31,49 @@ import org.uncommons.watchmaker.framework.factories.AbstractCandidateFactory;
  * by the evolutionary algorithm).
  * @author Daniel Dyer
  */
-public class SudokuFactory extends AbstractCandidateFactory<Sudoku>
-{
-    private static final List<Integer> VALUES = Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9);
+public class SudokuFactory extends AbstractCandidateFactory<Sudoku> {
 
-    private final Sudoku.Cell[][] template;
-    private final List<List<Integer>> nonFixedValues = new ArrayList<List<Integer>>(Sudoku.SIZE);
+    private final Sudoku.Gen[] template;
+    private int n, nn;
+    private int desde, hasta;
+    private Coordenadas c;
 
-    public SudokuFactory(String... pattern)
-    {
-        if (pattern.length != Sudoku.SIZE)
-        {
-            throw new IllegalArgumentException("Sudoku layout must have " + Sudoku.SIZE + " rows.");
+    public SudokuFactory(int n, Scanner sc, Coordenadas c) {
+        this.n = n;
+        nn = n * n;
+        this.template = new Sudoku.Gen[nn * nn];
+        int val;
+        desde = 1;
+        hasta = nn;
+        this.c = c;
+
+        for (int k = 0; k < template.length; k++) {
+            val = (int) ((desde - hasta + 1) * Math.random() + desde);
+            template[k] = new Sudoku.Gen(desde, hasta, val, false);
         }
 
-        this.template = new Sudoku.Cell[Sudoku.SIZE][Sudoku.SIZE];
-
-        // Keep track of which values in each row are not 'givens'.
-        for (int i = 0; i < Sudoku.SIZE; i++)
-        {
-            nonFixedValues.add(new ArrayList<Integer>(VALUES));
-        }
-
-        for (int i = 0; i < pattern.length; i++)
-        {
-            char[] rowPattern = pattern[i].toCharArray();
-            if (rowPattern.length != Sudoku.SIZE)
-            {
-                throw new IllegalArgumentException("Sudoku layout must have " + Sudoku.SIZE + " cells in each row.");
-            }
-            for (int j = 0; j < rowPattern.length; j++)
-            {
-                char c = rowPattern[j];
-                if (c >= '1' && c <= '9') // Cell is a 'given'.
-                {
-                    int value = c - '0'; // Convert char to in that it represents..
-                    template[i][j] = new Sudoku.Cell(value, true);
-                    List<Integer> rowValues = nonFixedValues.get(i);
-                    int index = Collections.binarySearch(rowValues, value);
-                    rowValues.remove(index);
-                }
-                else if (c != '.')
-                {
-                    throw new IllegalArgumentException("Unexpected character at (" + i + ", " + j + "): " + c);
+        for (int i = 0; i < nn; i++) {
+            for (int j = 0; j < nn; j++) {
+                val = sc.nextInt();
+                if (val != 0) {
+//                    sampleGenes[c.campo(i, j)]=new GenSudoku(conf, 1, nn,true,val);
+                    template[c.campo(i, j)].setValorInicial(val);
                 }
             }
         }
     }
 
-
     @Override
-    public Sudoku generateRandomCandidate(Random rng)
-    {
+    public Sudoku generateRandomCandidate(Random rng) {
         // Clone the template as the basis for this grid.
-        Sudoku.Cell[][] rows = template.clone();
-        for (int i = 0; i < rows.length; i++)
-        {
-            rows[i] = template[i].clone();
-        }
+        Sudoku.Gen[] rows = template.clone();
 
-        // Fill-in the non-fixed cells.
-        for (int i = 0; i < rows.length; i++)
-        {
-            List<Integer> rowValues = nonFixedValues.get(i);
-            Collections.shuffle(rowValues);
-            int index = 0;
-            for (int j = 0; j < rows[i].length; j++)
-            {
-                if (rows[i][j] == null)
-                {
-                    rows[i][j] = new Sudoku.Cell(rowValues.get(index), false);
-                    ++index;
-                }
-            }
+        int i = (int) Math.round(template.length*rng.nextDouble());
+        if (rows[i].isInicial()) {
+            return new Sudoku(rows, c);
+        } else {
+            rows[i].setValor((int) ((desde - hasta + 1) * Math.random() + desde));
+            return new Sudoku(rows, c);
         }
-        return new Sudoku(rows);
     }
 }
