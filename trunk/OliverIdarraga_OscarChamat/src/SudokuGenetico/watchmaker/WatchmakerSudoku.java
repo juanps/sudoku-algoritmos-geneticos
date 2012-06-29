@@ -77,6 +77,7 @@ public class WatchmakerSudoku {
     }
 
     public void solveSudoku() {
+        println("Ejecucion Solucion Watchmaker http://watchmaker.uncommons.org/ api: http://watchmaker.uncommons.org/api/index.html");
         SudokuFactory cf = new SudokuFactory(n, sc, c);
 
         EvolutionaryOperator a = new SudokuMutacion();

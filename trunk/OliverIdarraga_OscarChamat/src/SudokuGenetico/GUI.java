@@ -16,6 +16,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 import rutas.GetRoutes;
 
 /**
@@ -125,6 +126,23 @@ public class GUI extends javax.swing.JFrame {
 private void bSolucionarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bSolucionarActionPerformed
 
     try {
+        if((Integer)sPoblacion.getValue()< 1 || (Integer)sGeneraciones.getValue()< 1){
+            JOptionPane.showMessageDialog(this, "Poblaciones o generaciones menores que 1 fuera del entendimiento de los programadores\n"
+                                                + "Por favor digitelas correctamente, Gracias :)");
+            int genera=(Integer)sGeneraciones.getValue();
+            int pobla=(Integer)sPoblacion.getValue();
+            genera=Math.abs((genera*(-1)) +1);
+            pobla=Math.abs((pobla*(-1)) +1);
+            
+            if(genera+pobla==1)
+            JOptionPane.showMessageDialog(this, "Sip es un ciclo infinito xD, felicitaciones por encontrarlo");
+            
+            sGeneraciones.setValue(genera);
+            sPoblacion.setValue(pobla);
+            
+            return;
+        }
+        
         JGAPSudoku sud;
         String archivo = GetRoutes.escogerRutaArchivo();
         sud = new JGAPSudoku(taJpag, archivo, (Integer)sPoblacion.getValue(), (Integer)sGeneraciones.getValue());
