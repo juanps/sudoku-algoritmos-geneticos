@@ -6,20 +6,20 @@ import org.uncommons.watchmaker.framework.FitnessEvaluator;
 
 public class SudokuEvaluador implements FitnessEvaluator<Sudoku> {
 
-    private int n, nn;
+    private final int n, nn;
     private BitSet list;
-    private Coordenadas c;
+    private final Coordenadas c;
 
-    public SudokuEvaluador() {
+    public SudokuEvaluador(int n) {
+        this.n = n;
+        nn = n * n;
+        list = new BitSet(nn); // List of 0s
+        c = new Coordenadas(n);
     }
 
     @Override
     public double getFitness(Sudoku t, List<? extends Sudoku> list) {
 
-        this.n = t.n;
-        nn = n * n;
-        list = new BitSet(nn); // List of 0s
-        c = new Coordenadas(n);
 
         int fitness = 0;
         Sudoku.Gen[] gene = t.cells;

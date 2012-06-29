@@ -33,7 +33,7 @@ public class SudokuMutacion implements EvolutionaryOperator<Sudoku> {
         } else {
             int desde = newCell[i].desde;
             int hasta = newCell[i].hasta;
-            newCell[i].setValor((int) ((desde - hasta + 1) * Math.random() + desde));
+            newCell[i].setValor((int) ((hasta - desde + 1) * Math.random() + desde));
             return new Sudoku(newCell, sudoku.c);
         }
     }
