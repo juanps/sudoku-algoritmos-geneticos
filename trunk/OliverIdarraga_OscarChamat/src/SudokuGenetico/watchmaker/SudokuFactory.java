@@ -68,8 +68,10 @@ public class SudokuFactory extends AbstractCandidateFactory<Sudoku> {
         // Clone the template as the basis for this grid.
         Sudoku.Gen[] rows = template.clone();
 
-        int i = (int) Math.round(template.length*rng.nextDouble());
-        i=(i==81)?80:i;
+//        int i = (int) Math.round(template.length*rng.nextDouble());
+//        i=(i==nn*nn)?i-1:i;
+        
+        int i = rng.nextInt((nn*nn)-1);
         if (rows[i].isInicial()) {
             return new Sudoku(rows, c);
         } else {

@@ -84,7 +84,7 @@ public class WatchmakerSudoku {
         HARD_PUZZLE,
         BLANK_PUZZLE};
     //private final SelectionStrategy<Object> selectionStrategy = new TournamentSelection(selectionPressure.getNumberGenerator());
-    private final int POBLACION = 100, GENERACIONES = 60;
+    private final int POBLACION = 1000, GENERACIONES = 6000;
     private Scanner sc;
     private int n;
     private int nn;

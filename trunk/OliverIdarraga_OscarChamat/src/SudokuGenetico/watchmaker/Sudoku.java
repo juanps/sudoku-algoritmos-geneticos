@@ -40,8 +40,15 @@ public final class Sudoku {
          * @param fixed Whether or not this cell's value is fixed (a 'given').
          */
         public Gen(int desde, int hasta, int valor, boolean inicial) {
+
+            if ( valor < desde  || hasta < valor) {
+                throw new IllegalArgumentException("Value must be between 1 and 9.");
+            }
+
             this.valor = valor;
             this.inicial = inicial;
+            this.desde = desde;
+            this.hasta = hasta;
         }
 
         public int getValue() {
@@ -49,6 +56,9 @@ public final class Sudoku {
         }
 
         public void setValor(int valor) {
+            if ( valor < desde  || hasta < valor) {
+                throw new IllegalArgumentException("Value must be between 1 and 9.");
+            }
             this.valor = valor;
         }
 
@@ -57,6 +67,9 @@ public final class Sudoku {
         }
 
         public void setValorInicial(int valor) {
+            if ( valor < desde  || hasta < valor) {
+                throw new IllegalArgumentException("Value must be between 1 and 9.");
+            }
             this.valor = valor;
             this.inicial = true;
         }
