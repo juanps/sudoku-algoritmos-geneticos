@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
-import org.jgap.FitnessEvaluator;
+import org.uncommons.watchmaker.framework.FitnessEvaluator;
 import org.uncommons.maths.random.MersenneTwisterRNG;
 import org.uncommons.watchmaker.framework.EvolutionEngine;
 import org.uncommons.watchmaker.framework.EvolutionObserver;
@@ -33,6 +33,7 @@ import org.uncommons.watchmaker.framework.SelectionStrategy;
 import org.uncommons.watchmaker.framework.operators.EvolutionPipeline;
 import org.uncommons.watchmaker.framework.selection.RouletteWheelSelection;
 import org.uncommons.watchmaker.framework.selection.TournamentSelection;
+import org.uncommons.watchmaker.framework.termination.GenerationCount;
 import org.uncommons.watchmaker.framework.termination.TargetFitness;
 import org.uncommons.watchmaker.swing.AbortControl;
 import rutas.GetRoutes;
@@ -83,7 +84,7 @@ public class WatchmakerSudoku {
         HARD_PUZZLE,
         BLANK_PUZZLE};
     //private final SelectionStrategy<Object> selectionStrategy = new TournamentSelection(selectionPressure.getNumberGenerator());
-    private final AbortControl abortControl = new AbortControl();
+    private final int POBLACION = 100, GENERACIONES = 60;
     private Scanner sc;
     private int n;
     private int nn;
@@ -102,7 +103,7 @@ public class WatchmakerSudoku {
 //        sudokuView.setPuzzle(EASY_PUZZLE);
     }
 
-    protected void performTask() {
+    protected void solveSudoku() {
         SudokuFactory cf = new SudokuFactory(n, sc, c);
 
         EvolutionaryOperator a = new SudokuMutacion();
@@ -116,14 +117,34 @@ public class WatchmakerSudoku {
 
         SelectionStrategy<Object> selection = new RouletteWheelSelection();
         Random rng = new MersenneTwisterRNG();
-        
-        FitnessEvaluator fit=new SudokuEvaluador();
-        EvolutionEngine<String> engine = new GenerationalEvolutionEngine<String>(cf,
+
+        FitnessEvaluator<Sudoku> fit = new SudokuEvaluador(n);
+        EvolutionEngine<Sudoku> engine = new GenerationalEvolutionEngine<Sudoku>(cf,
                 pipeline,
-                new SudokuEvaluador(),
+                fit,
                 selection,
                 rng);
 
+        Sudoku mejor = engine.evolve(POBLACION, 10, new GenerationCount(GENERACIONES));
+
+        System.out.println("The best solution has a fitness value of "
+                + fit.getFitness(mejor, null));
+        System.out.println("Here's the completed Sudoku: ");
+        Sudoku.Gen[] genes = mejor.cells;
+        for (int k = 0; k < genes.length; k++) {
+            int repr = genes[k].getValue();
+            System.out.print(repr + "\t");
+            if ((k + 1) % nn == 0) {
+                System.out.println();
+            }
+        }
+
+    }
+
+    public static void main(String[] args) throws IOException {
+        WatchmakerSudoku o=new WatchmakerSudoku();
+        o.solveSudoku();
+        // TODO code application logic here
     }
 //    /**
 //     * Trivial evolution observer for displaying information at the end

@@ -60,5 +60,10 @@ public final class Sudoku {
             this.valor = valor;
             this.inicial = true;
         }
+
+        @Override
+        public String toString() {
+            return "Gen{" + "valor=" + valor + ", desde=" + desde + ", hasta=" + hasta + ", inicial=" + inicial + '}';
+        }
     }
 }

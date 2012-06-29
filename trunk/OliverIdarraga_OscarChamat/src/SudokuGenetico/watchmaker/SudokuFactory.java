@@ -48,7 +48,7 @@ public class SudokuFactory extends AbstractCandidateFactory<Sudoku> {
         this.c = c;
 
         for (int k = 0; k < template.length; k++) {
-            val = (int) ((desde - hasta + 1) * Math.random() + desde);
+            val = (int) ((hasta - desde + 1) * Math.random() + desde);
             template[k] = new Sudoku.Gen(desde, hasta, val, false);
         }
 
@@ -69,10 +69,11 @@ public class SudokuFactory extends AbstractCandidateFactory<Sudoku> {
         Sudoku.Gen[] rows = template.clone();
 
         int i = (int) Math.round(template.length*rng.nextDouble());
+        i=(i==81)?80:i;
         if (rows[i].isInicial()) {
             return new Sudoku(rows, c);
         } else {
-            rows[i].setValor((int) ((desde - hasta + 1) * Math.random() + desde));
+            rows[i].setValor((int) ((hasta - desde + 1) * Math.random() + desde));
             return new Sudoku(rows, c);
         }
     }
