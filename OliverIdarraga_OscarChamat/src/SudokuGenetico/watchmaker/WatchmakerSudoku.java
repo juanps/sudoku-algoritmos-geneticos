@@ -15,6 +15,7 @@
 // ============================================================================
 package SudokuGenetico.watchmaker;
 
+import java.awt.TextArea;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -43,52 +44,13 @@ import rutas.GetRoutes;
  */
 public class WatchmakerSudoku {
 
-    private static final String[] BLANK_PUZZLE = new String[]{".........",
-        ".........",
-        ".........",
-        ".........",
-        ".........",
-        ".........",
-        ".........",
-        ".........",
-        "........."};
-    private static final String[] EASY_PUZZLE = new String[]{"4.5...9.7",
-        ".2..9..6.",
-        "39.6.7.28",
-        "9..3.2..6",
-        "7..9.6..3",
-        "5..4.8..1",
-        "28.1.5.49",
-        ".7..3..8.",
-        "6.4...3.2"};
-    private static final String[] MEDIUM_PUZZLE = new String[]{"....3....",
-        ".....6293",
-        ".2.9.48..",
-        ".754...38",
-        "..46.71..",
-        "91...547.",
-        "..38.9.1.",
-        "1567.....",
-        "....1...."};
-    private static final String[] HARD_PUZZLE = new String[]{"...891...",
-        "....5.8..",
-        ".....6.2.",
-        "5....4..8",
-        "49....67.",
-        "8.13....5",
-        ".6..8..9.",
-        "..5.4.2.7",
-        "...1.3.8."};
-    private static final String[][] PUZZLES = new String[][]{EASY_PUZZLE,
-        MEDIUM_PUZZLE,
-        HARD_PUZZLE,
-        BLANK_PUZZLE};
     //private final SelectionStrategy<Object> selectionStrategy = new TournamentSelection(selectionPressure.getNumberGenerator());
-    private final int POBLACION = 1000, GENERACIONES = 6000;
+    private int POBLACION = 100, GENERACIONES = 60;
     private Scanner sc;
     private int n;
     private int nn;
     private Coordenadas c;
+    public TextArea taWatchmaker;
 
     public WatchmakerSudoku() throws IOException {
 
@@ -103,7 +65,18 @@ public class WatchmakerSudoku {
 //        sudokuView.setPuzzle(EASY_PUZZLE);
     }
 
-    protected void solveSudoku() {
+    public WatchmakerSudoku(TextArea taWatchmaker, String archivo, Integer poblacion, Integer generaciones) throws FileNotFoundException {
+        this.taWatchmaker = taWatchmaker;
+        sc = new Scanner(new File(archivo));
+        n = sc.nextInt();
+//        dbg(n);
+        nn = n * n;
+        c = new Coordenadas(n);
+        POBLACION = poblacion;
+        GENERACIONES = generaciones;
+    }
+
+    public void solveSudoku() {
         SudokuFactory cf = new SudokuFactory(n, sc, c);
 
         EvolutionaryOperator a = new SudokuMutacion();
@@ -125,24 +98,45 @@ public class WatchmakerSudoku {
                 selection,
                 rng);
 
+
+        engine.addEvolutionObserver(new EvolutionObserver<Sudoku>() {
+
+            public void populationUpdate(PopulationData<? extends Sudoku> data) {
+                print(String.format("Generacion %d: %s\n",
+                        data.getGenerationNumber(),
+                        data.getBestCandidateFitness()));
+            }
+        });
+
         Sudoku mejor = engine.evolve(POBLACION, 10, new GenerationCount(GENERACIONES));
 
-        System.out.println("The best solution has a fitness value of "
+        println("La mejor solucion tiene una aptitud de: "
                 + fit.getFitness(mejor, null));
-        System.out.println("Here's the completed Sudoku: ");
+        println("Aqui esta el sudoku completo: ");
         Sudoku.Gen[] genes = mejor.cells;
         for (int k = 0; k < genes.length; k++) {
             int repr = genes[k].getValue();
-            System.out.print(repr + "\t");
+            print(repr + "\t");
             if ((k + 1) % nn == 0) {
-                System.out.println();
+                println("");
             }
         }
 
     }
 
+    private void println(String string) {
+        print(string + "\n");
+    }
+
+    private void print(String string) {
+        System.out.print(string);
+        if (taWatchmaker != null) {
+            taWatchmaker.append(string);
+        }
+    }
+
     public static void main(String[] args) throws IOException {
-        WatchmakerSudoku o=new WatchmakerSudoku();
+        WatchmakerSudoku o = new WatchmakerSudoku();
         o.solveSudoku();
         // TODO code application logic here
     }

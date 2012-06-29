@@ -4,6 +4,7 @@
  */
 package SudokuGenetico.jgap;
 
+import java.awt.TextArea;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -11,6 +12,7 @@ import java.util.Arrays;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JSpinner;
 import org.jgap.Chromosome;
 import org.jgap.Configuration;
 import org.jgap.FitnessFunction;
@@ -27,12 +29,13 @@ import rutas.GetRoutes;
  */
 public class JGAPSudoku {
 
-    private static final int GENERACIONES = 600;
-    private static final int POBLACION = 1000;
+    private static int GENERACIONES=600;
+    private static int POBLACION=100;
     private int nn;
     private int n;
     private Scanner sc;
     private Coordenadas c;
+    TextArea taJpag;
 
     static void dbg(Object... o) {
         System.out.println(Arrays.deepToString(o));
@@ -51,7 +54,7 @@ public class JGAPSudoku {
             Logger.getLogger(JGAPSudoku.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-
+    
     public JGAPSudoku() throws FileNotFoundException, IOException {
         sc = new Scanner(new File(GetRoutes.escogerRutaArchivo()));
         n = sc.nextInt();
@@ -77,10 +80,22 @@ public class JGAPSudoku {
 //        System.out.println(" -----------------------");
 //    }
 
+    public JGAPSudoku(TextArea taJpag, String archivo, Integer poblacion, Integer generaciones) throws FileNotFoundException {
+        this.taJpag = taJpag;
+        sc = new Scanner(new File(archivo));
+        n = sc.nextInt();
+//        dbg(n);
+        nn = n * n;
+        c = new Coordenadas(n);
+        POBLACION=poblacion;
+        GENERACIONES=generaciones;
+    }
+
     public void solveSudoku() throws Exception {
 
-        System.out.println("tamaño lado del cuadrado del sudoku =" + n);
+        println("Tamaño lado del cuadrado del sudoku = " + n);
 
+        Configuration.reset();
         // Configuracion default
         Configuration conf = new DefaultConfiguration();
 
@@ -112,32 +127,44 @@ public class JGAPSudoku {
         //Cuantos cromosomas en la poblacion
         conf.setPopulationSize(POBLACION);
         Genotype population;
-        
+
         population = Genotype.randomInitialGenotype(conf);
 
-        System.out.print("Evolucionanado ");
+        println("Evolucionando ");
 //        dbg("populacion",population);
         for (int i = 0; i < GENERACIONES; i++) {
-            dbg("evolucion i ",i);
-            population.evolve();
-            System.out.print(population.getFittestChromosome().getFitnessValue() + " ");
+            print(String.format("Generacion %d: %s\n", i, population.getFittestChromosome().getFitnessValue() + " "));
         }
-        System.out.println();
-        
-        
+        println("");
+
+
         IChromosome bestSolutionSoFar = population.getFittestChromosome();
-        System.out.println("The best solution has a fitness value of "
+        println("La mejor solucion tiene una aptitud de: "
                 + bestSolutionSoFar.getFitnessValue());
-        System.out.println("Here's the completed Sudoku: ");
+        println("Aqui esta el sudoku completo: ");
         Gene[] genes = bestSolutionSoFar.getGenes();
         for (int k = 0; k < genes.length; k++) {
             String repr = genes[k].getPersistentRepresentation();
-            System.out.print(repr.substring(0, repr.indexOf(":")) + "\t");
+            print(repr.substring(0, repr.indexOf(":")) + "\t");
             if ((k + 1) % nn == 0) {
-                System.out.println();
+                println("");
             }
         }
-        
+
 //        dbg(bestSolutionSoFar);
     }
+
+    private void println(String string) {
+        print(string+"\n");
+    }
+
+    private void print(String string) {
+        System.out.print(string);
+        if(taJpag!=null)
+            taJpag.append(string);
+    }
+
+//    private void printf(String string, int i, String string0) {
+//        throw new UnsupportedOperationException("Not yet implemented");
+//    }
 }
