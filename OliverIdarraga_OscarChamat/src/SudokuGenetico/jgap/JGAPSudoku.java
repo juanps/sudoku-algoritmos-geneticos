@@ -93,6 +93,7 @@ public class JGAPSudoku {
 
     public void solveSudoku() throws Exception {
 
+        println("Ejecucion Solucion JGAP http://jgap.sourceforge.net/ , api: http://jgap.sourceforge.net/javadoc/3.6/ ");
         println("Tamaño lado del cuadrado del sudoku = " + n);
 
         Configuration.reset();
