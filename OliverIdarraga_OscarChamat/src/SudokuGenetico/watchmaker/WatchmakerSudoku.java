@@ -15,50 +15,27 @@
 // ============================================================================
 package SudokuGenetico.watchmaker;
 
-import ejemploDescargadoWatchmakerSudoku.Sudoku;
-import ejemploDescargadoWatchmakerSudoku.SudokuEvaluator;
-import ejemploDescargadoWatchmakerSudoku.SudokuFactory;
-import ejemploDescargadoWatchmakerSudoku.SudokuRowMutation;
-import ejemploDescargadoWatchmakerSudoku.SudokuVerticalCrossover;
-import ejemploDescargadoWatchmakerSudoku.SudokuView;
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.text.DecimalFormat;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import javax.swing.BorderFactory;
-import javax.swing.JApplet;
-import javax.swing.JButton;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JSpinner;
-import javax.swing.SpinnerNumberModel;
-import javax.swing.SpringLayout;
-import org.uncommons.gui.SpringUtilities;
-import org.uncommons.gui.SwingBackgroundTask;
-import org.uncommons.maths.random.CellularAutomatonRNG;
-import org.uncommons.maths.random.DiscreteUniformGenerator;
-import org.uncommons.maths.random.PoissonGenerator;
+import java.util.Scanner;
+import org.jgap.FitnessEvaluator;
+import org.uncommons.maths.random.MersenneTwisterRNG;
 import org.uncommons.watchmaker.framework.EvolutionEngine;
 import org.uncommons.watchmaker.framework.EvolutionObserver;
 import org.uncommons.watchmaker.framework.EvolutionaryOperator;
 import org.uncommons.watchmaker.framework.GenerationalEvolutionEngine;
 import org.uncommons.watchmaker.framework.PopulationData;
 import org.uncommons.watchmaker.framework.SelectionStrategy;
-import org.uncommons.watchmaker.framework.StandaloneEvolutionEngine;
 import org.uncommons.watchmaker.framework.operators.EvolutionPipeline;
+import org.uncommons.watchmaker.framework.selection.RouletteWheelSelection;
 import org.uncommons.watchmaker.framework.selection.TournamentSelection;
 import org.uncommons.watchmaker.framework.termination.TargetFitness;
 import org.uncommons.watchmaker.swing.AbortControl;
-import org.uncommons.watchmaker.swing.NumericParameterControl;
+import rutas.GetRoutes;
 
 /**
  * @author 
@@ -105,60 +82,59 @@ public class WatchmakerSudoku {
         MEDIUM_PUZZLE,
         HARD_PUZZLE,
         BLANK_PUZZLE};
-    
-    private final SelectionStrategy<Object> selectionStrategy
-        = new TournamentSelection(selectionPressure.getNumberGenerator());
+    //private final SelectionStrategy<Object> selectionStrategy = new TournamentSelection(selectionPressure.getNumberGenerator());
     private final AbortControl abortControl = new AbortControl();
+    private Scanner sc;
+    private int n;
+    private int nn;
+    private Coordenadas c;
 
-    public WatchmakerSudoku()
-    {
+    public WatchmakerSudoku() throws IOException {
+
+        sc = new Scanner(new File(GetRoutes.escogerRutaArchivo()));
+        n = sc.nextInt();
+//        dbg(n);
+        nn = n * n;
+        c = new Coordenadas(n);
 //        add(createControls(), BorderLayout.NORTH);
 //        add(sudokuView, BorderLayout.CENTER);
 //        add(createStatusBar(), BorderLayout.SOUTH);
 //        sudokuView.setPuzzle(EASY_PUZZLE);
     }
 
-            protected Sudoku performTask()
-            {
-                Random rng = new CellularAutomatonRNG();
-                List<EvolutionaryOperator<? super Sudoku>> operators
-                    = new ArrayList<EvolutionaryOperator<? super Sudoku>>(2);
-                // Cross-over rows between parents (so offspring is x rows from parent1 and
-                // y rows from parent2).
-                operators.add(new SudokuVerticalCrossover());
-                // Mutate the order of cells within individual rows.
-                operators.add(new SudokuRowMutation(new PoissonGenerator(2, rng),
-                                                    new DiscreteUniformGenerator(1, 8, rng)));
+    protected void performTask() {
+        SudokuFactory cf = new SudokuFactory(n, sc, c);
 
-                EvolutionaryOperator<Sudoku> pipeline = new EvolutionPipeline<Sudoku>(operators);
+        EvolutionaryOperator a = new SudokuMutacion();
 
-                EvolutionEngine<Sudoku> engine = new GenerationalEvolutionEngine<Sudoku> (new SudokuFactory(puzzle),
-                                                                                       pipeline,
-                                                                                       new SudokuEvaluator(),
-                                                                                       selectionStrategy,
-                                                                                       rng);
-                engine.addEvolutionObserver(new EvolutionLogger());
-                return engine.evolve(populationSize,
-                                     eliteCount,
-                                     new TargetFitness(0, false), // Continue until a perfect solution is found...
-                                     abortControl.getTerminationCondition()); // ...or the user aborts.
-            
+        List<EvolutionaryOperator<Sudoku>> operadores = new ArrayList<EvolutionaryOperator<Sudoku>>(2);
 
+        operadores.add(new SudokuReproduccion());
+        operadores.add(new SudokuMutacion());
 
+        EvolutionaryOperator<Sudoku> pipeline = new EvolutionPipeline<Sudoku>(operadores);
 
-}
+        SelectionStrategy<Object> selection = new RouletteWheelSelection();
+        Random rng = new MersenneTwisterRNG();
+        
+        FitnessEvaluator fit=new SudokuEvaluador();
+        EvolutionEngine<String> engine = new GenerationalEvolutionEngine<String>(cf,
+                pipeline,
+                new SudokuEvaluador(),
+                selection,
+                rng);
 
-
-    /**
-     * Trivial evolution observer for displaying information at the end
-     * of each generation.
-     */
-    private class EvolutionLogger implements EvolutionObserver<Sudoku> {
-
-    public void populationUpdate(PopulationData<Sudoku> data) {
-        sudokuView.setSolution(data.getBestCandidate());
-        generationsLabel.setText(String.valueOf(data.getGenerationNumber() + 1));
-        timeLabel.setText(TIME_FORMAT.format(((double) data.getElapsedTime()) / 1000));
     }
-}
+//    /**
+//     * Trivial evolution observer for displaying information at the end
+//     * of each generation.
+//     */
+//    private class EvolutionLogger implements EvolutionObserver<Sudoku> {
+//
+//        public void populationUpdate(PopulationData<Sudoku> data) {
+//            sudokuView.setSolution(data.getBestCandidate());
+//            generationsLabel.setText(String.valueOf(data.getGenerationNumber() + 1));
+//            timeLabel.setText(TIME_FORMAT.format(((double) data.getElapsedTime()) / 1000));
+//        }
+//    }
 }

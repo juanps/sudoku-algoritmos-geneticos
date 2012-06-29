@@ -15,6 +15,7 @@
 // ============================================================================
 package ejemploDescargadoWatchmakerSudoku;
 
+import SudokuGenetico.watchmaker.Sudoku;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -52,8 +53,8 @@ public class SudokuVerticalCrossover extends AbstractCrossover<Sudoku>
                                           int numberOfCrossoverPoints,
                                           Random rng)
     {
-        Sudoku.Cell[][] offspring1 = new Sudoku.Cell[Sudoku.SIZE][];
-        Sudoku.Cell[][] offspring2 = new Sudoku.Cell[Sudoku.SIZE][];
+        Sudoku.Gen[][] offspring1 = new Sudoku.Gen[Sudoku.SIZE][];
+        Sudoku.Gen[][] offspring2 = new Sudoku.Gen[Sudoku.SIZE][];
         for (int i = 0; i < Sudoku.SIZE; i++)
         {
             offspring1[i] = parent1.getRow(i);
@@ -61,7 +62,7 @@ public class SudokuVerticalCrossover extends AbstractCrossover<Sudoku>
         }
         
         // Apply as many cross-overs as required.
-        Sudoku.Cell[][] temp = new Sudoku.Cell[Sudoku.SIZE][];
+        Sudoku.Gen[][] temp = new Sudoku.Gen[Sudoku.SIZE][];
         for (int i = 0; i < numberOfCrossoverPoints; i++)
         {
             // Cross-over index is always greater than zero and less than

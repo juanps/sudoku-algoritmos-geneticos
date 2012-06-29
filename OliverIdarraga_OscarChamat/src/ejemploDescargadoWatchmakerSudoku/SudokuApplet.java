@@ -15,6 +15,7 @@
 // ============================================================================
 package ejemploDescargadoWatchmakerSudoku;
 
+import SudokuGenetico.watchmaker.SudokuReproduccion;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
@@ -211,7 +212,7 @@ public class SudokuApplet extends JApplet
                     = new ArrayList<EvolutionaryOperator<? super Sudoku>>(2);
                 // Cross-over rows between parents (so offspring is x rows from parent1 and
                 // y rows from parent2).
-                operators.add(new SudokuVerticalCrossover());
+                operators.add(new SudokuReproduccion());
                 // Mutate the order of cells within individual rows.
                 operators.add(new SudokuRowMutation(new PoissonGenerator(2, rng),
                                                     new DiscreteUniformGenerator(1, 8, rng)));

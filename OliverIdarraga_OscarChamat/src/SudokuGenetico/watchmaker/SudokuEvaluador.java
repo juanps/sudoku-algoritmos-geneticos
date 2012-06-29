@@ -1,47 +1,28 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-package SudokuGenetico.jgap_1;
+package SudokuGenetico.watchmaker;
 
 import java.util.BitSet;
-import org.jgap.FitnessFunction;
-import org.jgap.Gene;
-import org.jgap.IChromosome;
+import java.util.List;
+import org.uncommons.watchmaker.framework.FitnessEvaluator;
 
-/**
- *
- * @author civilian
- */
-public class FuncionAptitudSudoku extends FitnessFunction {
+public class SudokuEvaluador implements FitnessEvaluator<Sudoku> {
 
-    private final int n, nn;
+    private int n, nn;
     private BitSet list;
     private Coordenadas c;
-    private int[] sqr;
 
-    public FuncionAptitudSudoku(int n) {
-        this.n = n;
+    public SudokuEvaluador() {
+    }
+
+    @Override
+    public double getFitness(Sudoku t, List<? extends Sudoku> list) {
+
+        this.n = t.n;
         nn = n * n;
         list = new BitSet(nn); // List of 0s
         c = new Coordenadas(n);
 
-        sqr = new int[nn * nn];
-    }
-
-    @Override
-    protected double evaluate(IChromosome ic) {
         int fitness = 0;
-        Gene gene[] = ic.getGenes();
-
-        for (int i = 0; i < nn * nn; i++) {
-            sqr[i] = nn + 1;
-        }
-        
-        for (int i = 0, j = 0; i < nn * nn; i++, j = (j + 1) % nn) {
-            sqr[(Integer) gene[i].getAllele()-1] = j+1;
-        }
-
+        Sudoku.Gen[] gene = t.cells;
         for (int k = 0; k < nn; k++) {
             fitness += checkFila(k, gene);
             fitness += checkColumna(k, gene);
@@ -50,19 +31,19 @@ public class FuncionAptitudSudoku extends FitnessFunction {
         return nn * (nn - 1) * 3 - fitness;
     }
 
+    @Override
+    public boolean isNatural() {
+        return false;
+    }
+
     //cuantos valores estan vacios en la fila larga
-    private int checkFila(int r, Gene[] gene) {
+    private int checkFila(int r, Sudoku.Gen[] gene) {
         //      System.out.print(row + ":");
         list.clear();
-
         int m = r * nn;
         int v;
-//        for (int k = m; k < m + nn; k++) {
-//            v = ((Integer) gene[k].getAllele()).intValue();
-//            list.set(v - 1);//tengo v en la fila
-//        }
         for (int j = 0; j < nn; j++) {
-            v = sqr[c.campo(r, j)];
+            v = (Integer) gene[c.campo(r, j)].getValue();
             list.set(v - 1);//tengo v en la fila
 //            l[v-1]=true;
         }
@@ -76,13 +57,13 @@ public class FuncionAptitudSudoku extends FitnessFunction {
     }
 
     //cuantos valores estan vacios en la columna larga
-    private int checkColumna(int column, Gene[] gene) {
+    private int checkColumna(int column, Sudoku.Gen[] gene) {
         //      System.out.print("col " + column + ":");
         //      System.out.print(row + ":");
         list.clear();
         int v;
         for (int i = 0; i < nn; i++) {
-            v = sqr[c.campo(i, column)];
+            v = (Integer) gene[c.campo(i, column)].getValue();
             list.set(v - 1);//tengo v en la fila
         }
         int zeros = 0;//a quien no tengo
@@ -95,7 +76,7 @@ public class FuncionAptitudSudoku extends FitnessFunction {
     }
 
     //cuantos valores estan vacios en la caja de n por n
-    private int checkCaja(int box, Gene[] gene) {
+    private int checkCaja(int box, Sudoku.Gen[] gene) {
 
         int l = (box % n) * n,
                 k = (box / n) * n;
@@ -105,11 +86,11 @@ public class FuncionAptitudSudoku extends FitnessFunction {
         int v;
         for (int i = l; i < l + n - 1; i++) {
             for (int j = k; j < k + n - 1; j++) {
-                v = sqr[c.campo(i, j)];
+                v = (Integer) gene[c.campo(i, j)].getValue();
                 list.set(v - 1);
             }
         }
-        int zeros = 0;
+        int zeros = 0;                            // Numbers not checked off
         for (int i = 0; i < nn; i++) {
             if (!list.get(i)) {
                 zeros++;
