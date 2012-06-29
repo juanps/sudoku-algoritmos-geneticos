@@ -126,28 +126,29 @@ public class GUI extends javax.swing.JFrame {
 private void bSolucionarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bSolucionarActionPerformed
 
     try {
-        if((Integer)sPoblacion.getValue()< 1 || (Integer)sGeneraciones.getValue()< 1){
+        if ((Integer) sPoblacion.getValue() < 1 || (Integer) sGeneraciones.getValue() < 1) {
             JOptionPane.showMessageDialog(this, "Poblaciones o generaciones menores que 1 fuera del entendimiento de los programadores\n"
-                                                + "Por favor digitelas correctamente, Gracias :)");
-            int genera=(Integer)sGeneraciones.getValue();
-            int pobla=(Integer)sPoblacion.getValue();
-            genera=Math.abs((genera*(-1)) +1);
-            pobla=Math.abs((pobla*(-1)) +1);
-            
-            if(genera+pobla==1)
-            JOptionPane.showMessageDialog(this, "Sip es un ciclo infinito xD, felicitaciones por encontrarlo");
-            
+                    + "Por favor digitelas correctamente, Gracias :)");
+            int genera = (Integer) sGeneraciones.getValue();
+            int pobla = (Integer) sPoblacion.getValue();
+            genera = Math.abs((genera * (-1)) + 1);
+            pobla = Math.abs((pobla * (-1)) + 1);
+
+            if (genera + pobla == 1) {
+                JOptionPane.showMessageDialog(this, "Sip es un ciclo infinito xD, felicitaciones por encontrarlo");
+            }
+
             sGeneraciones.setValue(genera);
             sPoblacion.setValue(pobla);
-            
+
             return;
         }
-        
+
         JGAPSudoku sud;
         String archivo = GetRoutes.escogerRutaArchivo();
-        sud = new JGAPSudoku(taJpag, archivo, (Integer)sPoblacion.getValue(), (Integer)sGeneraciones.getValue());
+        sud = new JGAPSudoku(taJpag, archivo, (Integer) sPoblacion.getValue(), (Integer) sGeneraciones.getValue());
         sud.solveSudoku();
-        WatchmakerSudoku o = new WatchmakerSudoku(taWatchmaker, archivo, (Integer)sPoblacion.getValue(), (Integer)sGeneraciones.getValue());
+        WatchmakerSudoku o = new WatchmakerSudoku(taWatchmaker, archivo, (Integer) sPoblacion.getValue(), (Integer) sGeneraciones.getValue());
         o.solveSudoku();
     } catch (FileNotFoundException ex) {
         Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);

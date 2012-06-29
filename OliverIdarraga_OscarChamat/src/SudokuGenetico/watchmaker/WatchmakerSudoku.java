@@ -1,18 +1,3 @@
-// ============================================================================
-//   Copyright 2006, 2007 Daniel W. Dyer
-//
-//   Licensed under the Apache License, Version 2.0 (the "License");
-//   you may not use this file except in compliance with the License.
-//   You may obtain a copy of the License at
-//
-//       http://www.apache.org/licenses/LICENSE-2.0
-//
-//   Unless required by applicable law or agreed to in writing, software
-//   distributed under the License is distributed on an "AS IS" BASIS,
-//   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-//   See the License for the specific language governing permissions and
-//   limitations under the License.
-// ============================================================================
 package SudokuGenetico.watchmaker;
 
 import java.awt.TextArea;
@@ -23,17 +8,21 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
+import org.uncommons.maths.number.NumberGenerator;
 import org.uncommons.watchmaker.framework.FitnessEvaluator;
 import org.uncommons.maths.random.MersenneTwisterRNG;
+import org.uncommons.maths.random.Probability;
 import org.uncommons.watchmaker.framework.EvolutionEngine;
 import org.uncommons.watchmaker.framework.EvolutionObserver;
 import org.uncommons.watchmaker.framework.EvolutionaryOperator;
 import org.uncommons.watchmaker.framework.GenerationalEvolutionEngine;
 import org.uncommons.watchmaker.framework.PopulationData;
 import org.uncommons.watchmaker.framework.SelectionStrategy;
+import org.uncommons.watchmaker.framework.SteadyStateEvolutionEngine;
 import org.uncommons.watchmaker.framework.operators.EvolutionPipeline;
 import org.uncommons.watchmaker.framework.selection.RouletteWheelSelection;
 import org.uncommons.watchmaker.framework.selection.TournamentSelection;
+import org.uncommons.watchmaker.framework.selection.TruncationSelection;
 import org.uncommons.watchmaker.framework.termination.GenerationCount;
 import org.uncommons.watchmaker.framework.termination.TargetFitness;
 import org.uncommons.watchmaker.swing.AbortControl;
@@ -59,10 +48,6 @@ public class WatchmakerSudoku {
 //        dbg(n);
         nn = n * n;
         c = new Coordenadas(n);
-//        add(createControls(), BorderLayout.NORTH);
-//        add(sudokuView, BorderLayout.CENTER);
-//        add(createStatusBar(), BorderLayout.SOUTH);
-//        sudokuView.setPuzzle(EASY_PUZZLE);
     }
 
     public WatchmakerSudoku(TextArea taWatchmaker, String archivo, Integer poblacion, Integer generaciones) throws FileNotFoundException {
@@ -80,8 +65,6 @@ public class WatchmakerSudoku {
         println("Ejecucion Solucion Watchmaker http://watchmaker.uncommons.org/ api: http://watchmaker.uncommons.org/api/index.html");
         SudokuFactory cf = new SudokuFactory(n, sc, c);
 
-        EvolutionaryOperator a = new SudokuMutacion();
-
         List<EvolutionaryOperator<Sudoku>> operadores = new ArrayList<EvolutionaryOperator<Sudoku>>(2);
 
         operadores.add(new SudokuReproduccion());
@@ -89,9 +72,9 @@ public class WatchmakerSudoku {
 
         EvolutionaryOperator<Sudoku> pipeline = new EvolutionPipeline<Sudoku>(operadores);
 
-        SelectionStrategy<Object> selection = new RouletteWheelSelection();
         Random rng = new MersenneTwisterRNG();
-
+        SelectionStrategy<Object> selection = new TournamentSelection(new Probability(0.7));
+//        SelectionStrategy<Object> selection = new TruncationSelection(0.25);
         FitnessEvaluator<Sudoku> fit = new SudokuEvaluador(n);
         EvolutionEngine<Sudoku> engine = new GenerationalEvolutionEngine<Sudoku>(cf,
                 pipeline,
@@ -99,7 +82,14 @@ public class WatchmakerSudoku {
                 selection,
                 rng);
 
-
+//        EvolutionEngine<Sudoku> engine = new SteadyStateEvolutionEngine<Sudoku>(cf,
+//                pipeline,
+//                fit,
+//                selection,
+//                2,
+//                false,
+//                rng);
+        
         engine.addEvolutionObserver(new EvolutionObserver<Sudoku>() {
 
             public void populationUpdate(PopulationData<? extends Sudoku> data) {
@@ -109,7 +99,8 @@ public class WatchmakerSudoku {
             }
         });
 
-        Sudoku mejor = engine.evolve(POBLACION, 10, new GenerationCount(GENERACIONES));
+        int elite = (int) (POBLACION * 0.2);
+        Sudoku mejor = engine.evolve(POBLACION, elite, new GenerationCount(GENERACIONES));
 
         println("La mejor solucion tiene una aptitud de: "
                 + fit.getFitness(mejor, null));
@@ -139,18 +130,5 @@ public class WatchmakerSudoku {
     public static void main(String[] args) throws IOException {
         WatchmakerSudoku o = new WatchmakerSudoku();
         o.solveSudoku();
-        // TODO code application logic here
     }
-//    /**
-//     * Trivial evolution observer for displaying information at the end
-//     * of each generation.
-//     */
-//    private class EvolutionLogger implements EvolutionObserver<Sudoku> {
-//
-//        public void populationUpdate(PopulationData<Sudoku> data) {
-//            sudokuView.setSolution(data.getBestCandidate());
-//            generationsLabel.setText(String.valueOf(data.getGenerationNumber() + 1));
-//            timeLabel.setText(TIME_FORMAT.format(((double) data.getElapsedTime()) / 1000));
-//        }
-//    }
 }

@@ -1,36 +1,9 @@
-// ============================================================================
-//   Copyright 2006, 2007 Daniel W. Dyer
-//
-//   Licensed under the Apache License, Version 2.0 (the "License");
-//   you may not use this file except in compliance with the License.
-//   You may obtain a copy of the License at
-//
-//       http://www.apache.org/licenses/LICENSE-2.0
-//
-//   Unless required by applicable law or agreed to in writing, software
-//   distributed under the License is distributed on an "AS IS" BASIS,
-//   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-//   See the License for the specific language governing permissions and
-//   limitations under the License.
-// ============================================================================
 package SudokuGenetico.watchmaker;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
-import org.jgap.RandomGenerator;
 import org.uncommons.watchmaker.framework.factories.AbstractCandidateFactory;
 
-/**
- * Factory that generates potential Sudoku solutions from a list of "givens".
- * The rows of the generated solutions will all be valid (i.e. no duplicate VALUES)
- * but there are no constraints on the columns or sub-grids (these will be refined
- * by the evolutionary algorithm).
- * @author Daniel Dyer
- */
 public class SudokuFactory extends AbstractCandidateFactory<Sudoku> {
 
     private final Sudoku.Gen[] template;
@@ -70,8 +43,8 @@ public class SudokuFactory extends AbstractCandidateFactory<Sudoku> {
 
 //        int i = (int) Math.round(template.length*rng.nextDouble());
 //        i=(i==nn*nn)?i-1:i;
-        
-        int i = rng.nextInt((nn*nn)-1);
+
+        int i = rng.nextInt((nn * nn) - 1);
         if (rows[i].isInicial()) {
             return new Sudoku(rows, c);
         } else {
