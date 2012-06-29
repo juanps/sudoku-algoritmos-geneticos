@@ -1,9 +1,7 @@
 package SudokuGenetico.watchmaker;
 
 import java.util.Arrays;
-import java.util.BitSet;
 import java.util.List;
-import org.omg.PortableInterceptor.SYSTEM_EXCEPTION;
 import org.uncommons.watchmaker.framework.FitnessEvaluator;
 
 public class SudokuEvaluador implements FitnessEvaluator<Sudoku> {
@@ -47,7 +45,7 @@ public class SudokuEvaluador implements FitnessEvaluator<Sudoku> {
         int v;
         for (int j = 0; j < nn; j++) {
             v = (Integer) gene[c.campo(r, j)].getValue();
-            list[v - 1]=true;//tengo v en la fila
+            list[v - 1] = true;//tengo v en la fila
 //            l[v-1]=true;
         }
         int zeros = 0;//a quien no tengo
@@ -68,7 +66,7 @@ public class SudokuEvaluador implements FitnessEvaluator<Sudoku> {
         int v;
         for (int i = 0; i < nn; i++) {
             v = (Integer) gene[c.campo(i, column)].getValue();
-            list[v - 1]=true;//tengo v en la fila
+            list[v - 1] = true;//tengo v en la fila
         }
         int zeros = 0;//a quien no tengo
         for (int i = 0; i < nn; i++) {
@@ -96,7 +94,7 @@ public class SudokuEvaluador implements FitnessEvaluator<Sudoku> {
         for (int i = l; i < l + n - 1; i++) {
             for (int j = k; j < k + n - 1; j++) {
                 v = (Integer) gene[c.campo(i, j)].getValue();
-                list[v - 1]=true;
+                list[v - 1] = true;
             }
         }
         int zeros = 0;                            // Numbers not checked off

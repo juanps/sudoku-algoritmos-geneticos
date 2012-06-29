@@ -40,7 +40,6 @@
                               <Component id="sPoblacion" linkSize="10" min="-2" pref="51" max="-2" attributes="0"/>
                           </Group>
                       </Group>
-                      <EmptySpace min="-2" max="-2" attributes="0"/>
                   </Group>
                   <Group type="102" attributes="1">
                       <EmptySpace min="-2" max="-2" attributes="0"/>

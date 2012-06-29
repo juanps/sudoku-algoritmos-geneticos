@@ -25,12 +25,12 @@ public class SudokuMutacion implements EvolutionaryOperator<Sudoku> {
     }
 
     private Sudoku mutate(Sudoku sudoku, Random rng) {
-        int i = rng.nextInt(sudoku.cells.length-1);
+        int i = rng.nextInt(sudoku.cells.length - 1);
         Sudoku.Gen[] newCell = sudoku.cells.clone();
-        int nn=sudoku.cells.length;
-        
+        int nn = sudoku.cells.length;
+
 //        i=(i==nn*nn)?i-1:i;
-        
+
         if (sudoku.cells[i].isInicial()) {
             return new Sudoku(newCell, sudoku.c);
         } else {
