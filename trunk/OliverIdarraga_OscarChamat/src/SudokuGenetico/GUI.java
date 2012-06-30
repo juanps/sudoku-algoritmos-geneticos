@@ -151,7 +151,7 @@ private void bSolucionarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-F
         String archivo = GetRoutes.escogerRutaArchivo();
         tomarTiempos = false;
         if (tomarTiempos) {//no tener en cuenta este if para el entendimiento de el problema solo se utiliza para generar datos de prueba
-            // <editor-fold defaultstate="collapsed" desc="Codigo de Tomar tiempos">
+            // <editor-fold defaultstate="collapsed" desc="Codigo de tomar tiempos">
             int poblacion = 1000;
             int generaciones = 60;
             taJpag.append("Poblacion = " + poblacion + " Generaciones = " + generaciones + "\n");
