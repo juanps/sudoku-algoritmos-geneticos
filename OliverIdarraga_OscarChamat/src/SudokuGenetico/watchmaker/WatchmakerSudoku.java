@@ -93,7 +93,7 @@ public class WatchmakerSudoku {
         engine.addEvolutionObserver(new EvolutionObserver<Sudoku>() {
 
             public void populationUpdate(PopulationData<? extends Sudoku> data) {
-                print(String.format("Generacion %d: %s\n",
+                print(String.format("Generacion %d aptitud: %s\n",
                         data.getGenerationNumber(),
                         data.getBestCandidateFitness()));
             }

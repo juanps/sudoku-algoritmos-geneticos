@@ -12,11 +12,13 @@ package SudokuGenetico;
 
 import SudokuGenetico.jgap.JGAPSudoku;
 import SudokuGenetico.watchmaker.WatchmakerSudoku;
+import herramientas.Timing;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+import org.omg.PortableInterceptor.SYSTEM_EXCEPTION;
 import rutas.GetRoutes;
 
 /**
@@ -24,6 +26,8 @@ import rutas.GetRoutes;
  * @author civilian
  */
 public class GUI extends javax.swing.JFrame {
+
+    private boolean tomarTiempos = false;
 
     /** Creates new form GUI */
     public GUI() {
@@ -80,18 +84,17 @@ public class GUI extends javax.swing.JFrame {
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(sPoblacion, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED))
+                                .addComponent(sPoblacion, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE))))
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(taJpag, javax.swing.GroupLayout.DEFAULT_SIZE, 177, Short.MAX_VALUE)))
+                        .addComponent(taJpag, javax.swing.GroupLayout.DEFAULT_SIZE, 172, Short.MAX_VALUE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(sGeneraciones, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(taWatchmaker, javax.swing.GroupLayout.DEFAULT_SIZE, 177, Short.MAX_VALUE))
+                    .addComponent(taWatchmaker, javax.swing.GroupLayout.DEFAULT_SIZE, 172, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -145,12 +148,37 @@ private void bSolucionarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-F
             return;
         }
 
-        JGAPSudoku sud;
         String archivo = GetRoutes.escogerRutaArchivo();
+        tomarTiempos = false;
+        if (tomarTiempos) {//no tener en cuenta este if para el entendimiento de el problema solo se utiliza para generar datos de prueba
+            // <editor-fold defaultstate="collapsed" desc="Codigo de Tomar tiempos">
+            int poblacion = 1000;
+            int generaciones = 60;
+            taJpag.append("Poblacion = " + poblacion + " Generaciones = " + generaciones + "\n");
+            taJpag.append(String.format("%s\t %s\t %s\t \n", "poblacion", "jgap", "watchmaker"));
+            String jpa = "";
+            String watch = "";
+            for (int i = 0; i < 1100; i += 100) {
+                Timing t = new Timing();
+                t.tomarTiempo();
+                JGAPSudoku sud;
+                sud = new JGAPSudoku(null, archivo, poblacion + i, generaciones);
+                sud.solveSudoku();
+                jpa = t.tomarTiempo();
+                WatchmakerSudoku o = new WatchmakerSudoku(null, archivo, poblacion + i, generaciones);
+                o.solveSudoku();
+                watch = t.tomarTiempo();
+                taJpag.append(String.format("%s\t %s\t %s\t \n", poblacion + i, jpa, watch));
+            }
+            return;
+        }// </editor-fold>//IF
+
+        JGAPSudoku sud;
         sud = new JGAPSudoku(taJpag, archivo, (Integer) sPoblacion.getValue(), (Integer) sGeneraciones.getValue());
         sud.solveSudoku();
         WatchmakerSudoku o = new WatchmakerSudoku(taWatchmaker, archivo, (Integer) sPoblacion.getValue(), (Integer) sGeneraciones.getValue());
         o.solveSudoku();
+
     } catch (FileNotFoundException ex) {
         Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
     } catch (IOException ex) {
