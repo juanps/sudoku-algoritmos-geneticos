@@ -116,7 +116,7 @@ public class JGAPSudoku {
 //        dbg("populacion",population);
         for (int i = 0; i < GENERACIONES; i++) {
             population.evolve();
-            print(String.format("Generacion %d: %s\n", i, population.getFittestChromosome().getFitnessValue() + " "));
+            print(String.format("Generacion %d aptitud: %s\n", i, population.getFittestChromosome().getFitnessValue() + " "));
         }
         println("");
 
