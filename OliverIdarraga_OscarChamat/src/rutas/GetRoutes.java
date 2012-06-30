@@ -7,7 +7,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 import javax.swing.JFileChooser;
-
+/**
+ * Manejo de archivos con persistencia de rutas
+ * @author Oscar Chamat Caicedo (civilian)
+ */
 public class GetRoutes {
 	
 	public static String escogerRutaDirectorio() throws IOException {

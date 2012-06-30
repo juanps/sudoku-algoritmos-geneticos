@@ -16,6 +16,7 @@ import org.jgap.impl.IntegerGene;
 /**
  *
  * @author civilian
+ * @version 1.3
  */
 public class GenSudoku extends IntegerGene implements Gene {
 

@@ -55,7 +55,7 @@ public class GenSudoku extends IntegerGene implements Gene {
         }
     }
 
-    public void setImmutableValue(int valor) {
+    public void setValorInicial(int valor) {
 //        this.valor=valor;
         setAllele(valor);
         this.valorInicial = valor;
