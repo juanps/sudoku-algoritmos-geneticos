@@ -27,6 +27,7 @@ public class GUI extends javax.swing.JFrame {
 
     /** Creates new form GUI */
     public GUI() {
+        super("Solucion Sudoku Implementado Con Paquetes de Algoritmos Geneticos");
         initComponents();
     }
 

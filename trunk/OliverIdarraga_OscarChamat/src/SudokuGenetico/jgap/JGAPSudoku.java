@@ -12,7 +12,6 @@ import java.util.Arrays;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JSpinner;
 import org.jgap.Chromosome;
 import org.jgap.Configuration;
 import org.jgap.FitnessFunction;
@@ -29,13 +28,13 @@ import rutas.GetRoutes;
  */
 public class JGAPSudoku {
 
-    private static int GENERACIONES=600;
+    private static int GENERACIONES=60;
     private static int POBLACION=100;
     private int nn;
     private int n;
     private Scanner sc;
     private Coordenadas c;
-    TextArea taJpag;
+    private TextArea taJpag;
 
     static void dbg(Object... o) {
         System.out.println(Arrays.deepToString(o));
@@ -79,6 +78,9 @@ public class JGAPSudoku {
         // Configuracion default
         Configuration conf = new DefaultConfiguration();
 
+//        RandomGenerator rand=new GaussianRandomGenerator(1);
+//        conf.setRandomGenerator(rand);
+        
         // Se cambia el evaluador de aptitud
         FitnessFunction myFunc = new FuncionAptitudSudoku(n);
         conf.setFitnessFunction(myFunc);
@@ -113,6 +115,7 @@ public class JGAPSudoku {
         println("Evolucionando ");
 //        dbg("populacion",population);
         for (int i = 0; i < GENERACIONES; i++) {
+            population.evolve();
             print(String.format("Generacion %d: %s\n", i, population.getFittestChromosome().getFitnessValue() + " "));
         }
         println("");
